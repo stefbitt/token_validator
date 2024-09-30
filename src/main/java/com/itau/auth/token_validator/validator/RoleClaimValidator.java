@@ -16,7 +16,7 @@ public class RoleClaimValidator implements ClaimValidator {
 
         String role = jwt.getClaim("Role").asString();
         if (role == null || (!"Admin".equals(role) && !"Member".equals(role) && !"External".equals(role))) {
-            log.warn("Role claim is invalid or null: {}", role);
+            log.debug("Role claim is invalid or null: {}", role);
             throw new InvalidTokenException("Role claim is invalid or null");
         }
 

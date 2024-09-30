@@ -13,8 +13,11 @@ import java.util.List;
 @Service
 public class ClaimsValidationService {
 
-    @Autowired
     private List<ClaimValidator> validators;
+
+    public ClaimsValidationService(List<ClaimValidator> validators) {
+        this.validators = validators;
+    }
 
     public void validateClaims(DecodedJWT jwt) throws InvalidTokenException {
         log.info("Validating JWT claims.");

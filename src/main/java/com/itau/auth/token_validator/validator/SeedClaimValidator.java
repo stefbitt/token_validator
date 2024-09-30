@@ -15,18 +15,18 @@ public class SeedClaimValidator implements ClaimValidator {
 
         String seed = jwt.getClaim("Seed").asString();
         if (seed == null) {
-            log.warn("Seed claim is null");
+            log.debug("Seed claim is null");
             throw new InvalidTokenException("Seed claim is null");
         }
 
         try {
             long seedValue = Long.parseLong(seed);
             if (!isPrime(seedValue)) {
-                log.warn("Seed claim is not a prime number");
+                log.debug("Seed claim is not a prime number");
                 throw new InvalidTokenException("Seed claim is not a prime number");
             }
         } catch (NumberFormatException e) {
-            log.warn("Seed claim is not a valid number");
+            log.debug("Seed claim is not a valid number");
             throw new InvalidTokenException("Seed claim is not a valid number", e);
         }
     }

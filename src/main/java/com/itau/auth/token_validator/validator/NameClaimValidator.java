@@ -15,7 +15,7 @@ public class NameClaimValidator implements ClaimValidator {
 
         String name = jwt.getClaim("Name").asString();
         if (name == null || name.matches(".*\\d.*")) {
-            log.warn("Name claim contains numbers or is null: {}", name);
+            log.debug("Name claim contains numbers or is null: {}", name);
             throw new InvalidTokenException("Name claim contains numbers or is null");
         }
 

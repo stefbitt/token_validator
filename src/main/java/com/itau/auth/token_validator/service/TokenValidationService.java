@@ -4,13 +4,9 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.itau.auth.token_validator.exception.InvalidTokenException;
-import io.jsonwebtoken.*;
 import lombok.extern.log4j.Log4j2;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.logging.Logger;
 
 @Service
 @Log4j2
@@ -46,8 +42,8 @@ public class TokenValidationService {
             log.debug("Decoding JWT token.");
             return JWT.decode(token);
         } catch (JWTDecodeException e) {
-            log.error("Invalid JWT signature", e);
-            throw new InvalidTokenException("Invalid JWT signature", e);
+            log.error("Invalid JWT", e);
+            throw new InvalidTokenException("Invalid JWT", e);
         } catch (Exception e) {
             log.error("Unable to parse JWT token", e);
             throw new InvalidTokenException("Unable to parse JWT token", e);

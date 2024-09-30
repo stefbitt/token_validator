@@ -14,7 +14,7 @@ public class RootClaimValidator implements ClaimValidator {
         log.debug("Validating Root claim.");
 
         if (jwt.getClaims().size() != 3) {
-            log.warn("JWT must contain exactly 3 Claims: {}", jwt.getClaims().size());
+            log.debug("JWT must contain exactly 3 Claims: {}", jwt.getClaims().size());
             throw new InvalidTokenException("JWT must contain exactly 3 Claims");
         }
 
