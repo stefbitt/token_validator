@@ -84,26 +84,36 @@ resource "aws_ecs_task_definition" "task_definition" {
   memory                   = var.task_memory
   execution_role_arn       = var.execution_role_arn
 
-  container_definitions = jsonencode([{
-    name      = var.container_name
-    image     = var.container_image
-    cpu       = var.container_cpu
-    memory    = var.container_memory
-    essential = true
-    portMappings = [{
-      containerPort = var.container_port
-      hostPort      = var.container_port
-      protocol      = "tcp"
-    }]
-    logConfiguration = {
-      logDriver = "awslogs"
-      options = {
-        awslogs-group         = var.log_group_name
-        awslogs-region        = var.aws_region
-        awslogs-stream-prefix = var.container_name
+  container_definitions = jsonencode([
+    {
+      name         = var.container_name
+      image        = var.container_image
+      cpu          = var.container_cpu
+      memory       = var.container_memory
+      essential    = true
+      portMappings = [
+        {
+          containerPort = var.container_port
+          hostPort      = var.container_port
+          protocol      = "tcp"
+        }
+      ]
+      environment = [
+        {
+          name  = "SPRING_PROFILES_ACTIVE"
+          value = "aws"
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options   = {
+          awslogs-group         = var.log_group_name
+          awslogs-region        = var.aws_region
+          awslogs-stream-prefix = var.container_name
+        }
       }
     }
-  }])
+  ])
 }
 
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
@@ -119,8 +129,8 @@ resource "aws_ecs_service" "ecs_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets         = var.subnets
-    security_groups = [aws_security_group.ecs_sg.id]
+    subnets          = var.subnets
+    security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = true
   }
 

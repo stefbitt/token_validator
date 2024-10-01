@@ -119,6 +119,12 @@ jobs:
                     "hostPort": 80
                   }
                 ],
+                "environment": [
+                  {
+                    "name": "SPRING_PROFILES_ACTIVE",
+                    "value": "aws"
+                  }
+                ],
                 "logConfiguration": {
                   "logDriver": "awslogs",
                   "options": {
