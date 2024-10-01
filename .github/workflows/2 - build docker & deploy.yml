@@ -38,12 +38,12 @@ jobs:
       - name: Build, tag, and push Docker image to ECR
         env:
           ECR_REGISTRY: 471112644854.dkr.ecr.us-east-1.amazonaws.com
-          ECR_REPOSITORY: token_validator
+          ECR_REPOSITORY: token-validator
           IMAGE_TAG: ${{ github.sha }}
         run: |
           IMAGE_TAG_SHORT=${IMAGE_TAG:0:8}
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:IMAGE_TAG_SHORT .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:IMAGE_TAG_SHORT
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
   deploy-infra:
     runs-on: ubuntu-latest
