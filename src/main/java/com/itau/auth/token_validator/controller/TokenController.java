@@ -1,6 +1,5 @@
 package com.itau.auth.token_validator.controller;
 
-import com.itau.auth.token_validator.exception.InvalidTokenException;
 import com.itau.auth.token_validator.service.TokenValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

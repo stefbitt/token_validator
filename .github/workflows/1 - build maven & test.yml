@@ -1,0 +1,42 @@
+name: Build mavem project and execute test
+
+on:
+  push:
+    branches:
+      - feature/*
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build with Maven
+        run: mvn clean package
+
+      - name: Run unit tests
+        run: mvn test
+
+#      - name: Run integration tests
+#        run: mvn -Dcucumber.options="--glue com.itau.auth.token_validator.integration.steps src/test/resources/features" test
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: token-validator
+          path: target
