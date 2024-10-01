@@ -46,11 +46,6 @@ variable "execution_role_arn" {
   type        = string
 }
 
-variable "task_role_arn" {
-  description = "ARN of the IAM role for ECS task"
-  type        = string
-}
-
 variable "container_name" {
   description = "Name of the container in the task"
   type        = string
