@@ -129,7 +129,7 @@ jobs:
                 }
               }
             ],
-            "executionRoleArn": "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ecsTaskExecutionRole",
+            "executionRoleArn": "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ecsTaskExecutionRole"
           }
           EOF
           
@@ -137,7 +137,7 @@ jobs:
           cat task-definition.json
           
           echo 'register task definition'
-          aws ecs register-task-definition ---cli-input-json file://task-definition.json
+          aws ecs register-task-definition --cli-input-json file://task-definition.json
 
       - name: Deploy to ECS
         run: |
