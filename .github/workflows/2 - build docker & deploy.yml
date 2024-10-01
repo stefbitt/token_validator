@@ -38,12 +38,12 @@ jobs:
       - name: Build, tag, and push Docker image to ECR
         env:
           ECR_REGISTRY: 471112644854.dkr.ecr.us-east-1.amazonaws.com
-          ECR_REPOSITORY: token_validator
+          ECR_REPOSITORY: token-validator
           IMAGE_TAG: ${{ github.sha }}
         run: |
           IMAGE_TAG_SHORT=${IMAGE_TAG:0:8}
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:IMAGE_TAG_SHORT .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:IMAGE_TAG_SHORT
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SHORT .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SHORT
 
   deploy-infra:
     runs-on: ubuntu-latest
@@ -74,20 +74,75 @@ jobs:
       - name: Apply terraform
         run: cd infra && terraform apply -auto-approve
 
-#deploy-to-ecs:
-#  runs-on: ubuntu-latest
-#  needs: docker-build-and-push
-#  steps:
-#    - name: Configure AWS Credentials
-#      uses: aws-actions/configure-aws-credentials@v2
-#      with:
-#        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#        aws-region: ${{ secrets.AWS_REGION }}
-#
-#    - name: Deploy to Amazon ECS
-#      run: |
-#        TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition <ECS_TASK_DEFINITION_NAME>)
-#        NEW_TASK_DEFINITION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" '.taskDefinition.containerDefinitions[0].image=$IMAGE')
-#        aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEFINITION"
-#        aws ecs update-service --cluster <ECS_CLUSTER_NAME> --service <ECS_SERVICE_NAME> --force-new-deployment
+  deploy-to-ecs:
+    runs-on: ubuntu-latest
+    needs: deploy-infra
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+#      - name: Deploy to Amazon ECS
+#        run: |
+#          TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition token-validator)
+#          NEW_TASK_DEFINITION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SHORT" '.taskDefinition.containerDefinitions[0].image=$IMAGE')
+#          aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEFINITION"
+#          aws ecs update-service --cluster cluster-ecs --service token-validator --force-new-deployment
+
+      - name: Register ECS Task Definition
+        env:
+          ECR_REGISTRY: 471112644854.dkr.ecr.us-east-1.amazonaws.com
+          ECR_REPOSITORY: token-validator
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          IMAGE_TAG_SHORT=${IMAGE_TAG:0:8}
+          cat <<EOF > task-definition.json
+          {
+            "family": "token-validator",
+            "networkMode": "awsvpc",
+            "requiresCompatibilities": [
+              "FARGATE"
+            ],
+            "cpu": "256",
+            "memory": "512",
+            "containerDefinitions": [
+              {
+                "name": "token-validator",
+                "image": "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SHORT",
+                "essential": true,
+                "portMappings": [
+                  {
+                    "containerPort": 80,
+                    "hostPort": 80
+                  }
+                ],
+                "logConfiguration": {
+                  "logDriver": "awslogs",
+                  "options": {
+                    "awslogs-group": "/ecs/service-token-validator",
+                    "awslogs-region": "${{ secrets.AWS_REGION }}",
+                    "awslogs-stream-prefix": "ecs"
+                  }
+                }
+              }
+            ],
+            "executionRoleArn": "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ecsTaskExecutionRole"
+          }
+          EOF
+          
+          echo 'task-definition'
+          cat task-definition.json
+          
+          echo 'register task definition'
+          aws ecs register-task-definition --cli-input-json file://task-definition.json
+
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service \
+            --cluster cluster-ecs \
+            --service token-validator \
+            --task-definition token-validator \
+            --force-new-deployment
