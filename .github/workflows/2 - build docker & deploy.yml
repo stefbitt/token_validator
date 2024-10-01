@@ -144,4 +144,5 @@ jobs:
           aws ecs update-service \
             --cluster cluster-ecs \
             --service token-validator \
+            --task-definition token-validator \
             --force-new-deployment
