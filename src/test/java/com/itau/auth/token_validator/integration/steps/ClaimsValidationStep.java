@@ -27,7 +27,7 @@ public class ClaimsValidationStep {
     @LocalServerPort
     private int port;
 
-    private final String END_POINT = "/api/v1/token/validate";
+    private final String END_POINT = "/api/v1/token/validate?jwt=";
 
     @Given("a valid JWT token")
     public void a_valid_jwt_token() {
@@ -66,10 +66,10 @@ public class ClaimsValidationStep {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(jwtToken, headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         try {
-            response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            response = restTemplate.exchange(url + jwtToken, HttpMethod.GET, requestEntity, String.class);
         } catch (HttpClientErrorException e) {
             response = ResponseEntity.status(e.getRawStatusCode()).body(e.getResponseBodyAsString());
         }
