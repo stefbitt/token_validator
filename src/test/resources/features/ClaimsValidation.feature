@@ -23,3 +23,15 @@ Feature: Claims validation via real REST API
     When the token is sent
     Then the response status should be 400
     And the response should contain "false"
+
+  Scenario: Validate claims when Seed is not a prime number
+    Given a JWT token with Seed a not prime number
+    When the token is sent
+    Then the response status should be 400
+    And the response should contain "false"
+
+  Scenario: Validate claims when name more 256 Characters
+    Given a JWT token with name more 256 Characters
+    When the token is sent
+    Then the response status should be 400
+    And the response should contain "false"

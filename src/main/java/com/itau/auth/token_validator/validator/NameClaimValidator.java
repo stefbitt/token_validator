@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class NameClaimValidator implements ClaimValidator {
 
+    private static final int MAX_LENGTH = 256;
+
     @Override
     public void validate(DecodedJWT jwt) throws InvalidTokenException {
         log.debug("Validating Name claim.");
@@ -17,6 +19,11 @@ public class NameClaimValidator implements ClaimValidator {
         if (name == null || name.matches(".*\\d.*")) {
             log.debug("Name claim contains numbers or is null: {}", name);
             throw new InvalidTokenException("Name claim contains numbers or is null");
+        }
+
+        if (name.length() > MAX_LENGTH) {
+            log.debug("Name claim contains more than 256 characters: {}", name);
+            throw new InvalidTokenException("Name claim contains more than 256 characters");
         }
 
         log.debug("Name claim validated successfully.");

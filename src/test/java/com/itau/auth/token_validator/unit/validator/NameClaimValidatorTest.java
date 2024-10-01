@@ -52,4 +52,23 @@ public class NameClaimValidatorTest {
                 .isInstanceOf(InvalidTokenException.class)
                 .hasMessageContaining("Name claim contains numbers or is null");
     }
+
+    @Test
+    void shouldThrowInvalidTokenException_WhenNameIsMore256Characters() {
+        when(jwt.getClaim("Name")).thenReturn(nameClaim);
+        when(nameClaim.asString()).thenReturn("Lorem ipsum dolor sit amet. Ea mollitia voluptate id saepe magni est " +
+                "quos eveniet ut omnis rerum sit animi perspiciatis. Sit Quis libero aut dolor dolore ut quia " +
+                "aspernatur a ullam ipsam sit reprehenderit fuga ut nemo ullam non dolore autem. Et accusamus " +
+                "ducimus eum omnis provident ea nesciunt nostrum aut corrupti provident ad odit dolorem aut " +
+                "veritatis vero id consequuntur cumque! Eum rerum cupiditate est enim quasi et ipsam ipsa est " +
+                "iste voluptatum. Et rerum quia eos sint autem non temporibus reprehenderit et illo impedit et " +
+                "fugiat dolorum. Est nulla galisum est voluptas delectus At veniam consequatur non quisquam " +
+                "ipsum qui aspernatur enim. Et sunt sunt molestiae eveniet ut consectetur repellendus ut " +
+                "ratione minima ea quam odio sed dolorum molestiae. Eum perspiciatis voluptas ut excepturi " +
+                "dolorem aut ullam neque vel inventore delectus id quaerat dolore est laborum sint.");
+
+        assertThatThrownBy(() -> nameClaimValidator.validate(jwt))
+                .isInstanceOf(InvalidTokenException.class)
+                .hasMessageContaining("Name claim contains more than 256 characters");
+    }
 }
