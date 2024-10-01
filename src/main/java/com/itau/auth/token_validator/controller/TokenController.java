@@ -19,8 +19,12 @@ public class TokenController {
 
     @PostMapping("/validate")
     public ResponseEntity<Boolean> validateToken(@RequestBody String jwt) {
-        boolean isValid = tokenValidationService.validate(jwt);
-        return new ResponseEntity<>(isValid, HttpStatus.OK);
+        try {
+            boolean isValid = tokenValidationService.validate(jwt);
+            return new ResponseEntity<>(isValid, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
     }
 }
 

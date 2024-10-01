@@ -1,7 +1,9 @@
-package com.itau.auth.token_validator.service;
+package com.itau.auth.token_validator.unit.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.itau.auth.token_validator.exception.InvalidTokenException;
+import com.itau.auth.token_validator.service.ClaimsValidationService;
+import com.itau.auth.token_validator.service.TokenValidationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

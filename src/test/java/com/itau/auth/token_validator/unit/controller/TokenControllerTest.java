@@ -1,5 +1,6 @@
-package com.itau.auth.token_validator.controller;
+package com.itau.auth.token_validator.unit.controller;
 
+import com.itau.auth.token_validator.controller.TokenController;
 import com.itau.auth.token_validator.exception.InvalidTokenException;
 import com.itau.auth.token_validator.service.TokenValidationService;
 import org.junit.jupiter.api.Test;
