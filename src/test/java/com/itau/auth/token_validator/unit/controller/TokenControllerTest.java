@@ -12,7 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,7 +32,7 @@ public class TokenControllerTest {
 
         when(tokenValidationService.validate(jwt)).thenReturn(true);
 
-        mockMvc.perform(post("/api/v1/token/validate")
+        mockMvc.perform(get("/api/v1/token/validate?jwt=" + jwt)
                         .content(jwt)
                         .contentType("application/json"))
                 .andExpect(status().isOk())
@@ -45,7 +45,7 @@ public class TokenControllerTest {
 
         when(tokenValidationService.validate(jwt)).thenReturn(false);
 
-        mockMvc.perform(post("/api/v1/token/validate")
+        mockMvc.perform(get("/api/v1/token/validate?jwt=" + jwt)
                         .content(jwt)
                         .contentType("application/json"))
                 .andExpect(status().isOk())
@@ -58,7 +58,7 @@ public class TokenControllerTest {
 
         when(tokenValidationService.validate(jwt)).thenThrow(new InvalidTokenException("Malformed token"));
 
-        mockMvc.perform(post("/api/v1/token/validate")
+        mockMvc.perform(get("/api/v1/token/validate?jwt=" + jwt)
                         .content(jwt)
                         .contentType("application/json"))
                 .andExpect(status().isBadRequest())

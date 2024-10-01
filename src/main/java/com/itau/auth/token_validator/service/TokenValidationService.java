@@ -32,8 +32,6 @@ public class TokenValidationService {
         } catch (InvalidTokenException e) {
             log.error("JWT validation failed: {}", e.getMessage());
             throw e;
-        } catch (Exception e) {
-            throw new InvalidTokenException("Invalid JWT token");
         }
     }
 

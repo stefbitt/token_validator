@@ -1,0 +1,298 @@
+{
+	"info": {
+		"_postman_id": "63d0418e-4320-4a14-88d1-99332d36d9f7",
+		"name": "token-validator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11791016"
+	},
+	"item": [
+		{
+			"name": "Sucesso",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.response.to.have.body(\"true\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/v1/token/validate?jwt=eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJTZWVkIjoiNzg0MSIsIk5hbWUiOiJUb25pbmhvIEFyYXVqbyJ9.QY05sIjtrcJnP533kQNk8QXcaleJ1Q01jWY_ZzIZuAg",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"token",
+						"validate"
+					],
+					"query": [
+						{
+							"key": "jwt",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJTZWVkIjoiNzg0MSIsIk5hbWUiOiJUb25pbmhvIEFyYXVqbyJ9.QY05sIjtrcJnP533kQNk8QXcaleJ1Q01jWY_ZzIZuAg"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Jwt invalido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.response.to.have.body(\"false\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/v1/token/validate?jwt=eyJhbGciOiJzI1NiJ9.dfsdfsfryJSr2xrIjoiQWRtaW4iLCJTZrkIjoiNzg0MSIsIk5hbrUiOiJUb25pbmhvIEFyYXVqbyJ9.QY05fsdfsIjtrcJnP533kQNk8QXcaleJ1Q01jWY_ZzIZuAg",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"token",
+						"validate"
+					],
+					"query": [
+						{
+							"key": "jwt",
+							"value": "eyJhbGciOiJzI1NiJ9.dfsdfsfryJSr2xrIjoiQWRtaW4iLCJTZrkIjoiNzg0MSIsIk5hbrUiOiJUb25pbmhvIEFyYXVqbyJ9.QY05fsdfsIjtrcJnP533kQNk8QXcaleJ1Q01jWY_ZzIZuAg"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Claim Name com Números",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.response.to.have.body(\"false\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{host}}/api/v1/token/validate?jwt=eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiRXh0ZXJuYWwiLCJTZWVkIjoiODgwMzciLCJOYW1lIjoiTTRyaWEgT2xpdmlhIn0.6YD73XWZYQSSMDf6H0i3-kylz1-TY_Yt6h1cV2Ku-Qs",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"token",
+						"validate"
+					],
+					"query": [
+						{
+							"key": "jwt",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiRXh0ZXJuYWwiLCJTZWVkIjoiODgwMzciLCJOYW1lIjoiTTRyaWEgT2xpdmlhIn0.6YD73XWZYQSSMDf6H0i3-kylz1-TY_Yt6h1cV2Ku-Qs"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "JWT com mais de 3 claims",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.response.to.have.body(\"false\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/v1/token/validate?jwt=eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiTWVtYmVyIiwiT3JnIjoiQlIiLCJTZWVkIjoiMTQ2MjciLCJOYW1lIjoiVmFsZGlyIEFyYW5oYSJ9.cmrXV_Flm5mfdpfNUVopY_I2zeJUy4EZ4i3Fea98zvY",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"token",
+						"validate"
+					],
+					"query": [
+						{
+							"key": "jwt",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiTWVtYmVyIiwiT3JnIjoiQlIiLCJTZWVkIjoiMTQ2MjciLCJOYW1lIjoiVmFsZGlyIEFyYW5oYSJ9.cmrXV_Flm5mfdpfNUVopY_I2zeJUy4EZ4i3Fea98zvY"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Seed deve ser primo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.response.to.have.body(\"false\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{host}}/api/v1/token/validate?jwt=eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiRXh0ZXJuYWwiLCJTZWVkIjoiNCIsIk5hbWUiOiJNYXJpYSBPbGl2aWEifQ.qxBPAEOf991Xly9YeRKkZzBl1ngVSl4G64bC0Z_jnmY",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"token",
+						"validate"
+					],
+					"query": [
+						{
+							"key": "jwt",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiRXh0ZXJuYWwiLCJTZWVkIjoiNCIsIk5hbWUiOiJNYXJpYSBPbGl2aWEifQ.qxBPAEOf991Xly9YeRKkZzBl1ngVSl4G64bC0Z_jnmY"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Claim name deve ter 256 caracteres",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"pm.test(\"Body is correct\", function () {\r",
+							"    pm.response.to.have.body(\"false\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/v1/token/validate?jwt=eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiRXh0ZXJuYWwiLCJTZWVkIjoiMiIsIk5hbWUiOiJMb3JlbSBpcHN1bSBkb2xvciBzaXQgYW1ldC4gUXVpIGNvcnJ1cHRpIGRpc3RpbmN0aW8gc2l0IG9mZmljaWlzIGZ1Z2l0IGV1bSB2b2x1cHRhdGVtIGZhY2lsaXMuIFNpdCBhbWV0IG9tbmlzIGV0IGlzdGUgZWFydW0gdXQgaWxsdW0gZXhjZXB0dXJpIGVhIHByYWVzZW50aXVtIGlwc2FtLiBBYiByZXBlbGxhdCB0ZW1wb3JpYnVzIGhpYyBtb2xsaXRpYSB2ZW5pYW0gZXQgcGFyaWF0dXIgdm9sdXB0YXMgcXVpIG1vbGVzdGlhZSBpcHN1bSBlc3QgcmVydW0gYmxhbmRpdGlpcy4gQXQgcmVwZWxsZW5kdXMgdWxsYW0gZXN0IGVhcXVlIGFtZXQgYXV0IG5paGlsIGF1dGVtLiBJbiBhcGVyaWFtIGRvbG9ydW0gZXVtIGluY2lkdW50IGNvbnNlcXVhdHVyIHF1aSBzaW50IG51bXF1YW0hIFF1byB2ZXJpdGF0aXMgcGVyc3BpY2lhdGlzIGVzdCBoYXJ1bSBpbGxvIGF1dCBxdWlzIG5pc2kgcXVpIHN1bnQgZmFjaWxpcyBxdW8gcGFyaWF0dXIgcXVhZXJhdC4gUXVpIHF1aWRlbSBleGNlcHR1cmkgYXV0IHZvbHVwdGF0ZW0gcGVyc3BpY2lhdGlzIGN1bSBhbGlxdWFtIGRlYml0aXMgc2VkIGNvbW1vZGkgY29uc2VjdGV0dXIgdXQgcmF0aW9uZSBkb2xvcmVzIGF1dCB2b2x1cHRhcyBkb2xvcmVtLiBFdCBudWxsYSB0ZW1wb3JhIGVhIHN1c2NpcGl0IG1vbGVzdGlhcyBBdCBwYXJpYXR1ciBxdWFtIGV0IHF1YXMgb2RpdCBub24gZGlzdGluY3RpbyBlbmltLiBRdWkgcmVwcmVoZW5kZXJpdCBhdHF1ZSBhYiBwcmFlc2VudGl1bSBuaXNpIGF1dCBuZW1vIGRpc3RpbmN0aW8uIE5vbiBhbWV0IHNlcXVpIHV0IHBhcmlhdHVyIG1vbGVzdGlhZSBldCB2b2x1cHRhdHVtIHZlbmlhbSBzaXQgYWNjdXNhbXVzIHZvbHVwdGFzLiBBIG5lY2Vzc2l0YXRpYnVzIGFtZXQgdmVsIGlsbHVtIGFzc3VtZW5kYSB2ZWwgZW5pbSBtYWlvcmVzIHV0IHJlcnVtIGFsaWFzIGV0IG1heGltZSByZXBlbGxlbmR1cyBlYSBkb2xvciBzYXBpZW50ZT8ifQ.oZ5RVkn-21Pmk-7tOsKQJYG2VEGOrY60zGfhO9qF6oY",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"token",
+						"validate"
+					],
+					"query": [
+						{
+							"key": "jwt",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiRXh0ZXJuYWwiLCJTZWVkIjoiMiIsIk5hbWUiOiJMb3JlbSBpcHN1bSBkb2xvciBzaXQgYW1ldC4gUXVpIGNvcnJ1cHRpIGRpc3RpbmN0aW8gc2l0IG9mZmljaWlzIGZ1Z2l0IGV1bSB2b2x1cHRhdGVtIGZhY2lsaXMuIFNpdCBhbWV0IG9tbmlzIGV0IGlzdGUgZWFydW0gdXQgaWxsdW0gZXhjZXB0dXJpIGVhIHByYWVzZW50aXVtIGlwc2FtLiBBYiByZXBlbGxhdCB0ZW1wb3JpYnVzIGhpYyBtb2xsaXRpYSB2ZW5pYW0gZXQgcGFyaWF0dXIgdm9sdXB0YXMgcXVpIG1vbGVzdGlhZSBpcHN1bSBlc3QgcmVydW0gYmxhbmRpdGlpcy4gQXQgcmVwZWxsZW5kdXMgdWxsYW0gZXN0IGVhcXVlIGFtZXQgYXV0IG5paGlsIGF1dGVtLiBJbiBhcGVyaWFtIGRvbG9ydW0gZXVtIGluY2lkdW50IGNvbnNlcXVhdHVyIHF1aSBzaW50IG51bXF1YW0hIFF1byB2ZXJpdGF0aXMgcGVyc3BpY2lhdGlzIGVzdCBoYXJ1bSBpbGxvIGF1dCBxdWlzIG5pc2kgcXVpIHN1bnQgZmFjaWxpcyBxdW8gcGFyaWF0dXIgcXVhZXJhdC4gUXVpIHF1aWRlbSBleGNlcHR1cmkgYXV0IHZvbHVwdGF0ZW0gcGVyc3BpY2lhdGlzIGN1bSBhbGlxdWFtIGRlYml0aXMgc2VkIGNvbW1vZGkgY29uc2VjdGV0dXIgdXQgcmF0aW9uZSBkb2xvcmVzIGF1dCB2b2x1cHRhcyBkb2xvcmVtLiBFdCBudWxsYSB0ZW1wb3JhIGVhIHN1c2NpcGl0IG1vbGVzdGlhcyBBdCBwYXJpYXR1ciBxdWFtIGV0IHF1YXMgb2RpdCBub24gZGlzdGluY3RpbyBlbmltLiBRdWkgcmVwcmVoZW5kZXJpdCBhdHF1ZSBhYiBwcmFlc2VudGl1bSBuaXNpIGF1dCBuZW1vIGRpc3RpbmN0aW8uIE5vbiBhbWV0IHNlcXVpIHV0IHBhcmlhdHVyIG1vbGVzdGlhZSBldCB2b2x1cHRhdHVtIHZlbmlhbSBzaXQgYWNjdXNhbXVzIHZvbHVwdGFzLiBBIG5lY2Vzc2l0YXRpYnVzIGFtZXQgdmVsIGlsbHVtIGFzc3VtZW5kYSB2ZWwgZW5pbSBtYWlvcmVzIHV0IHJlcnVtIGFsaWFzIGV0IG1heGltZSByZXBlbGxlbmR1cyBlYSBkb2xvciBzYXBpZW50ZT8ifQ.oZ5RVkn-21Pmk-7tOsKQJYG2VEGOrY60zGfhO9qF6oY"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

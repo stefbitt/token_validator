@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = "src/test/resources/features",
         glue = "com.itau.auth.token_validator.integration.steps",
-        plugin = {"pretty", "summary"}
+        plugin = {"pretty", "html:target/cucumber-html-reports", "json:target/cucumber.json"}
 )
 public class CucumberTestRunner {
 }
