@@ -63,11 +63,5 @@ jobs:
       - name: Validate terraform
         run: cd infra && terraform validate
 
-      - name: Planner terraform
+      - name: Plan terraform
         run: cd infra && terraform plan -var-file="terraform.tfvars" -out=tfplan
-
-      - name: Upload tfplan
-        uses: actions/upload-artifact@v3
-        with:
-          name: tfplan
-          path: infra
