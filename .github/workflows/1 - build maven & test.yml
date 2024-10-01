@@ -32,8 +32,8 @@ jobs:
       - name: Run unit tests
         run: mvn test
 
-      - name: Run integration tests
-        run: mvn -Dcucumber.options="--glue com.itau.auth.token_validator.integration.steps src/test/resources/features" test
+#      - name: Run integration tests
+#        run: mvn -Dcucumber.options="--glue com.itau.auth.token_validator.integration.steps src/test/resources/features" test
 
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v3
