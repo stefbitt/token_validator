@@ -128,8 +128,11 @@ jobs:
           }
           EOF
           
-          aws ecs register-task-definition ---cli-input-json file://task-definition.json
+          echo 'task-definition'
+          cat task-definition.json
           
+          echo 'register task definition'
+          aws ecs register-task-definition ---cli-input-json file://task-definition.json
 
       - name: Deploy to ECS
         run: |
