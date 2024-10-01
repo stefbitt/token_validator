@@ -103,5 +103,5 @@ Parsing e Validação de JWT: O parsing e a validação de JWTs são feitos usan
 
 # Infra 
 
-Os recrusos de infra relecionados a aplicação foram provisionados na aws através do terraform<br>
-Toda a escrutura está na pasta /infra
+Os recursos de infra relacionados na aplicação foram provisionados na aws através do terraform<br>
+Toda a estrutura está na pasta /infra

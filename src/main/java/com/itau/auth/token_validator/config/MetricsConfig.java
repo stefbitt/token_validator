@@ -29,7 +29,6 @@ public class MetricsConfig {
         };
 
         CloudWatchAsyncClient cloudWatchAsyncClient = CloudWatchAsyncClient.builder()
-                .credentialsProvider(DefaultCredentialsProvider.create())
                 .region(Region.US_EAST_1)
                 .build();
 
