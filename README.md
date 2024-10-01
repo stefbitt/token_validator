@@ -23,7 +23,11 @@ A aplicação será iniciada na porta 80.
 # Testando a Aplicação<br>
 Você pode utilizar ferramentas como Postman para realizar requisições:
 
+## Local
 GET http://localhost/api/v1/token/validate?jwt=eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJTZWVkIjoiNzg0MSIsIk5hbWUiOiJUb25pbmhvIEFyYXVqbyJ9.QY05sIjtrcJnP533kQNk8QXcaleJ1Q01jWY_ZzIZuAg
+
+## Cloud Aws
+GET http://token-validator-alb-596544518.us-east-1.elb.amazonaws.com/api/v1/token/validate?jwt=eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJTZWVkIjoiNzg0MSIsIk5hbWUiOiJUb25pbmhvIEFyYXVqbyJ9.QY05sIjtrcJnP533kQNk8QXcaleJ1Q01jWY_ZzIZuAg
 
 # Docker
 para subir a aplicação através do docker basta executar os comandos abaixo
