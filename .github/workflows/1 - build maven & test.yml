@@ -40,3 +40,20 @@ jobs:
         with:
           name: token-validator
           path: target
+
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Initialize terraform
+        run: terraform init
+
+      - name: Validate terraform
+        run: terraform validate
+
+      - name: Planner terraform
+        run: terraform plan -out=tfplan
+
+      - name: Upload tfplan
+        uses: actions/upload-artifact@v3
+        with:
+          name: tfplan
