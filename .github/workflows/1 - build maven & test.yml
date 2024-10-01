@@ -60,7 +60,7 @@ jobs:
         run: terraform validate
 
       - name: Planner terraform
-        run: terraform plan -var-file="terraform.tfvars" -out=tfplan
+        run: terraform plan -var-file="infra/terraform.tfvars" -out=tfplan
 
       - name: Upload tfplan
         uses: actions/upload-artifact@v3
