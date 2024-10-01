@@ -85,9 +85,55 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Deploy to Amazon ECS
+#      - name: Deploy to Amazon ECS
+#        run: |
+#          TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition token-validator)
+#          NEW_TASK_DEFINITION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SHORT" '.taskDefinition.containerDefinitions[0].image=$IMAGE')
+#          aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEFINITION"
+#          aws ecs update-service --cluster cluster-ecs --service token-validator --force-new-deployment
+
+      - name: Register ECS Task Definition
         run: |
-          TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition token-validator)
-          NEW_TASK_DEFINITION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SHORT" '.taskDefinition.containerDefinitions[0].image=$IMAGE')
-          aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEFINITION"
-          aws ecs update-service --cluster cluster-ecs --service token-validator --force-new-deployment
+          cat <<EOF > task-definition.json
+          {
+            "family": "token-validator",
+            "networkMode": "awsvpc",
+            "requiresCompatibilities": [
+              "FARGATE"
+            ],
+            "cpu": "256",
+            "memory": "512",
+            "containerDefinitions": [
+              {
+                "name": "token-validator",
+                "image": "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_SHORT",
+                "essential": true,
+                "portMappings": [
+                  {
+                    "containerPort": 80,
+                    "hostPort": 80
+                  }
+                ],
+                "logConfiguration": {
+                  "logDriver": "awslogs",
+                  "options": {
+                    "awslogs-group": "/ecs/service-token-validator",
+                    "awslogs-region": "${{ secrets.AWS_REGION }}",
+                    "awslogs-stream-prefix": "ecs"
+                  }
+                }
+              }
+            ],
+            "executionRoleArn": "arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ecsTaskExecutionRole",
+          }
+          EOF
+          
+          aws ecs register-task-definition --cli-input-json file://task-definition.json
+          
+
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service \
+            --cluster cluster-ecs \
+            --service token-validator \
+            --force-new-deployment
