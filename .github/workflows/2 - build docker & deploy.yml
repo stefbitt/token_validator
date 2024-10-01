@@ -93,7 +93,12 @@ jobs:
 #          aws ecs update-service --cluster cluster-ecs --service token-validator --force-new-deployment
 
       - name: Register ECS Task Definition
+        env:
+          ECR_REGISTRY: 471112644854.dkr.ecr.us-east-1.amazonaws.com
+          ECR_REPOSITORY: token-validator
+          IMAGE_TAG: ${{ github.sha }}
         run: |
+          IMAGE_TAG_SHORT=${IMAGE_TAG:0:8}
           cat <<EOF > task-definition.json
           {
             "family": "token-validator",
