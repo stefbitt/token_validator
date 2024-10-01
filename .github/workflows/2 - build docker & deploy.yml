@@ -122,7 +122,15 @@ jobs:
                 "environment": [
                   {
                     "name": "SPRING_PROFILES_ACTIVE",
-                    "value": "aws"
+                    "value": "cloud-aws"
+                  },
+                  {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "value": "${{ secrets.AWS_ACCESS_KEY_ID }}"
+                  },
+                  {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "value": "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
                   }
                 ],
                 "logConfiguration": {
