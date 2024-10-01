@@ -44,6 +44,12 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Change to Terraform Directory
+        run: cd infra
+
       - name: Initialize terraform
         run: terraform init
 
