@@ -3,7 +3,7 @@ name: Build mavem project and execute test
 on:
   push:
     branches:
-      - release/*
+      - feature/*
 
 jobs:
   build-and-test:
