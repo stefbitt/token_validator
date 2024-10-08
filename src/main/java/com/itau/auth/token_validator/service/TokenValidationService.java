@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.itau.auth.token_validator.exception.InvalidTokenException;
+import com.itau.auth.token_validator.metrics.Metric;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ public class TokenValidationService {
     @Autowired
     private ClaimsValidationService claimsValidationService;
 
+    @Metric(name = "TokenValidationService.validate", unit = "Milliseconds")
     public boolean validate(String jwt) throws InvalidTokenException {
         log.info("Starting JWT validation.");
 

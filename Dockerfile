@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY target/token-validator.jar app.jar
 
-EXPOSE 80
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

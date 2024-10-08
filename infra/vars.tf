@@ -9,11 +9,6 @@ variable "cluster_name" {
   type        = string
 }
 
-variable "cluster_arn" {
-  description = "ARN of the ECS cluster"
-  type        = string
-}
-
 variable "vpc_id" {
   description = "VPC ID for ECS service and ALB"
   type        = string
