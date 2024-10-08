@@ -32,6 +32,7 @@ public class SeedClaimValidator implements ClaimValidator {
     }
 
     private boolean isPrime(long number) {
+        //TODO Cache com numeros primos já conhecidos
         if (number <= 1) return false;
         for (long i = 2; i <= Math.sqrt(number); i++) {
             if (number % i == 0) return false;

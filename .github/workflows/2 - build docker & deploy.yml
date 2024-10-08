@@ -54,15 +54,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.6"
 
       - name: Initialize terraform
         run: cd infra && terraform init
@@ -97,7 +99,7 @@ jobs:
       - name: Register ECS Task Definition
         env:
           ECR_REGISTRY: 471112644854.dkr.ecr.us-east-1.amazonaws.com
-          ECR_REPOSITORY: token-validator
+          ECR_REPOSITORY: ecr-token-validator
           IMAGE_TAG: ${{ github.sha }}
         run: |
           IMAGE_TAG_SHORT=${IMAGE_TAG:0:8}
