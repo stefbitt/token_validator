@@ -16,7 +16,7 @@ public class TokenValidationService {
     @Autowired
     private ClaimsValidationService claimsValidationService;
 
-    @Metric(name = "TokenValidationService.validate", unit = "Milliseconds")
+    //@Metric(name = "TokenValidationService.validate", unit = "Milliseconds")
     public boolean validate(String jwt) throws InvalidTokenException {
         log.info("Starting JWT validation.");
 
