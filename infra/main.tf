@@ -5,16 +5,19 @@ resource "aws_vpc" "vpc_private" {
 resource "aws_subnet" "subnet_private_01" {
   vpc_id     = aws_vpc.vpc_private.id
   cidr_block = "10.0.16.0/20"
+  depends_on = [aws_vpc.vpc_private]
 }
 
 resource "aws_subnet" "subnet_private_02" {
   vpc_id     = aws_vpc.vpc_private.id
   cidr_block = "10.0.32.0/20"
+  depends_on = [aws_vpc.vpc_private]
 }
 
 resource "aws_subnet" "subnet_private_03" {
   vpc_id     = aws_vpc.vpc_private.id
   cidr_block = "10.0.48.0/20"
+  depends_on = [aws_vpc.vpc_private]
 }
 
 resource "awscc_ecr_repository" "lifecycle_policy_example" {
@@ -105,9 +108,7 @@ resource "aws_lb" "alb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [aws_subnet.subnet_private_01, aws_subnet.subnet_private_02, aws_subnet.subnet_private_03]
-
-  enable_deletion_protection = false
+  subnets            = [aws_subnet.subnet_private_01.id, aws_subnet.subnet_private_02.id, aws_subnet.subnet_private_03.id]
 }
 
 resource "aws_lb_target_group" "ecs_tg" {
