@@ -40,7 +40,7 @@ jobs:
       - name: Build, tag, and push Docker image to ECR
         env:
           ECR_REGISTRY: 471112644854.dkr.ecr.us-east-1.amazonaws.com
-          ECR_REPOSITORY: token-validator
+          ECR_REPOSITORY: ecr-token-validator
           IMAGE_TAG: ${{ github.sha }}
         run: |
           IMAGE_TAG_SHORT=${IMAGE_TAG:0:8}
