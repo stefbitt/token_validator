@@ -2,6 +2,10 @@ resource "aws_vpc" "vpc_private" {
   cidr_block = "10.0.0.0/16"
 }
 
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.vpc_private.id
+}
+
 resource "aws_subnet" "subnet_private_01" {
   vpc_id     = aws_vpc.vpc_private.id
   cidr_block = "10.0.16.0/20"
@@ -32,7 +36,7 @@ resource "aws_ecs_cluster" "cluster_valida_token" {
 resource "aws_security_group" "alb_sg" {
   name        = "${var.service_name}-alb-sg"
   description = "Allow HTTP and HTTPS traffic to ALB"
-  vpc_id      = var.vpc_id
+  vpc_id      = aws_vpc.vpc_private.id
 
   ingress {
     from_port   = 80
@@ -59,7 +63,7 @@ resource "aws_security_group" "alb_sg" {
 resource "aws_security_group" "ecs_sg" {
   name        = "${var.service_name}-ecs-sg"
   description = "Allow HTTP traffic to ECS tasks"
-  vpc_id      = var.vpc_id
+  vpc_id      = aws_vpc.vpc_private.id
 
   ingress {
     from_port       = var.container_port
@@ -88,7 +92,7 @@ resource "aws_lb_target_group" "ecs_tg" {
   name        = "${var.service_name}-tg"
   port        = var.container_port
   protocol    = "HTTP"
-  vpc_id      = var.vpc_id
+  vpc_id      = aws_vpc.vpc_private.id
   target_type = "ip"
 
   health_check {
@@ -165,7 +169,7 @@ resource "aws_ecs_service" "ecs_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = var.subnets
+    subnets          = [aws_subnet.subnet_private_01.id, aws_subnet.subnet_private_02.id, aws_subnet.subnet_private_03.id]
     security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = false
   }
