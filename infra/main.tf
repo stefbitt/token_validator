@@ -20,33 +20,6 @@ resource "aws_subnet" "subnet_private_03" {
   depends_on = [aws_vpc.vpc_private]
 }
 
-resource "awscc_ecr_repository" "lifecycle_policy_example" {
-  repository_name      = "ecr-token-validator"
-  image_tag_mutability = "MUTABLE"
-
-  lifecycle_policy = {
-    lifecycle_policy_text = <<EOF
-        {
-            "rules": [
-                {
-                    "rulePriority": 1,
-                    "description": "Expire images older than 1 day",
-                    "selection": {
-                        "tagStatus": "untagged",
-                        "countType": "sinceImagePushed",
-                        "countUnit": "days",
-                        "countNumber": 1
-                    },
-                    "action": {
-                        "type": "expire"
-                    }
-                }
-            ]
-        }
-        EOF
-  }
-}
-
 resource "aws_ecs_cluster" "cluster_valida_token" {
   name = var.cluster_name
 
