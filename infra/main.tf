@@ -205,7 +205,7 @@ resource "aws_apigatewayv2_vpc_link" "ecs_vpc_link" {
 resource "aws_apigatewayv2_integration" "ecs_integration" {
   api_id             = aws_apigatewayv2_api.valida-token-gateway.id
   integration_type   = "HTTP_PROXY"
-  integration_uri    = aws_lb_listener.http.arn
+  integration_uri    = "${aws_lb_listener.http.arn}/api/v1/token/validate"
   integration_method = "GET"
   connection_type    = "VPC_LINK"
   connection_id      = aws_apigatewayv2_vpc_link.ecs_vpc_link.id
