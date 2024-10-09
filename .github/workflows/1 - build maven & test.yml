@@ -61,3 +61,23 @@ jobs:
 
       - name: Plan terraform
         run: cd infra && terraform plan -var-file="terraform.tfvars" -out=tfplan
+
+  create_pull_request:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get current branch name
+        run: echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.branch_name }}
+          base: develop
+          title: "Pull Request automático de ${{ env.branch_name }} para develop"
+          body: "Este PR foi criado automaticamente para mesclar as mudanças da branch ${{ env.branch_name }} para develop."
+          labels: 'automatic'

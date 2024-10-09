@@ -9,6 +9,16 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "vpc_id" {
+  description = "VPC ID for ECS service and ALB"
+  type        = string
+}
+
+variable "subnets" {
+  description = "Subnets for ECS service and ALB"
+  type        = list(string)
+}
+
 variable "task_family" {
   description = "Family name of the task definition"
   type        = string
