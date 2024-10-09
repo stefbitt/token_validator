@@ -63,27 +63,27 @@ jobs:
       - name: Plan terraform
         run: cd infra && terraform plan -var-file="terraform.tfvars" -out=tfplan
 
-  create_pull_request:
-    runs-on: terraform
-    needs: terraform
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Get current branch name
-        run: echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-
-      - name: Create new branch for PR
-        run: |
-          git checkout -b feature/auto-pr-${{ env.branch_name }}
-          git push origin feature/auto-pr-${{ env.branch_name }}
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: feature/auto-pr-${{ env.branch_name }}  # Nova branch criada no passo anterior
-          base: develop
-          title: "Pull Request automático de ${{ env.branch_name }} para develop"
-          body: "Este PR foi criado automaticamente para mesclar as mudanças da branch ${{ env.branch_name }} para develop."
-          labels: 'automatic'
+#  create_pull_request:
+#    runs-on: terraform
+#    needs: terraform
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v7
+#
+#      - name: Get current branch name
+#        run: echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+#
+#      - name: Create new branch for PR
+#        run: |
+#          git checkout -b feature/auto-pr-${{ env.branch_name }}
+#          git push origin feature/auto-pr-${{ env.branch_name }}
+#
+#      - name: Create Pull Request
+#        uses: peter-evans/create-pull-request@v4
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          branch: feature/auto-pr-${{ env.branch_name }}
+#          base: develop
+#          title: "Pull Request automático de ${{ env.branch_name }} para develop"
+#          body: "Este PR foi criado automaticamente para mesclar as mudanças da branch ${{ env.branch_name }} para develop."
+#          labels: 'automatic'
