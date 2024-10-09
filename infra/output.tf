@@ -3,5 +3,5 @@ output "load_balancer_dns" {
 }
 
 output "api_gateway_url" {
-  value = aws_apigatewayv2_stage.stage-gtw-valida-token.invoke_url
+  value = aws_api_gateway_deployment.validate_deployment.invoke_url
 }

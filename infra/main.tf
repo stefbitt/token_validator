@@ -202,26 +202,54 @@ resource "aws_apigatewayv2_vpc_link" "ecs_vpc_link" {
   subnet_ids     = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id, aws_subnet.private_subnet_3.id]  # As subnets privadas do ALB
 }
 
-resource "aws_apigatewayv2_integration" "ecs_integration" {
-  api_id             = aws_apigatewayv2_api.valida-token-gateway.id
-  integration_type   = "HTTP_PROXY"
-  integration_uri    = "http://${aws_lb.alb.dns_name}/api/v1/token/validate"
-  integration_method = "GET"
-  connection_type    = "VPC_LINK"
-  connection_id      = aws_apigatewayv2_vpc_link.ecs_vpc_link.id
+resource "aws_api_gateway_rest_api" "valida_token_gateway" {
+  name        = "valida-token-gateway"
+  description = "API para validar tokens"
 }
 
-resource "aws_apigatewayv2_route" "ecs_route" {
-  api_id    = aws_apigatewayv2_api.valida-token-gateway.id
-  route_key = "GET /api/v1/token/validate"
-
-  target = "integrations/${aws_apigatewayv2_integration.ecs_integration.id}"
+resource "aws_api_gateway_resource" "resource_api" {
+  rest_api_id = aws_api_gateway_rest_api.valida_token_gateway.id
+  parent_id   = aws_api_gateway_rest_api.valida_token_gateway.root_resource_id
+  path_part   = "api"
 }
 
-resource "aws_apigatewayv2_stage" "stage-gtw-valida-token" {
-  api_id      = aws_apigatewayv2_api.valida-token-gateway.id
-  name        = "dev"
-  auto_deploy = true
+resource "aws_api_gateway_resource" "resource_v1" {
+  rest_api_id = aws_api_gateway_rest_api.valida_token_gateway.id
+  parent_id   = aws_api_gateway_resource.resource_api.id
+  path_part   = "v1"
+}
+
+resource "aws_api_gateway_resource" "resource_token" {
+  rest_api_id = aws_api_gateway_rest_api.valida_token_gateway.id
+  parent_id   = aws_api_gateway_resource.resource_v1.id
+  path_part   = "token"
+}
+
+resource "aws_api_gateway_resource" "resource_validate" {
+  rest_api_id = aws_api_gateway_rest_api.valida_token_gateway.id
+  parent_id   = aws_api_gateway_resource.resource_token.id
+  path_part   = "validate"
+}
+
+resource "aws_api_gateway_integration" "validate_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.valida_token_gateway.id
+  resource_id             = aws_api_gateway_resource.resource_validate.id
+  http_method             = "GET"
+  integration_http_method = "GET"
+  type                    = "HTTP_PROXY"
+  uri                     = "http://${aws_lb.alb.dns_name}/api/v1/token/validate"
+}
+
+resource "aws_api_gateway_method" "get_token_validate" {
+  rest_api_id   = aws_api_gateway_rest_api.valida_token_gateway.id
+  resource_id   = aws_api_gateway_resource.resource_validate.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_deployment" "validate_deployment" {
+  rest_api_id = aws_api_gateway_rest_api.valida_token_gateway.id
+  stage_name  = "dev"
 }
 
 resource "aws_lb" "alb" {
