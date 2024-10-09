@@ -1,5 +1,5 @@
 output "load_balancer_dns" {
-  value = aws_lb.alb.dns_name
+  value = aws_lb.nlb.dns_name
 }
 
 output "api_gateway_url" {
