@@ -1,27 +1,143 @@
+resource "aws_apigatewayv2_api" "valida-token-gateway" {
+  name          = "valida-token-gateway"
+  protocol_type = "HTTP"
+}
+
+resource "aws_eip" "nat_eip_1" {
+}
+
+resource "aws_eip" "nat_eip_2" {
+}
+
+resource "aws_eip" "nat_eip_3" {
+}
+
 resource "aws_vpc" "vpc_private" {
   cidr_block = "10.0.0.0/16"
 }
 
-resource "aws_internet_gateway" "gw" {
+resource "aws_subnet" "public_subnet_1" {
+  vpc_id            = aws_vpc.vpc_private.id
+  cidr_block        = "10.0.0.0/24"
+  availability_zone = "us-east-1a"
+  map_public_ip_on_launch = true
+}
+
+resource "aws_subnet" "public_subnet_2" {
+  vpc_id            = aws_vpc.vpc_private.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "us-east-1b"
+  map_public_ip_on_launch = true
+}
+
+resource "aws_subnet" "public_subnet_3" {
+  vpc_id            = aws_vpc.vpc_private.id
+  cidr_block        = "10.0.4.0/24"
+  availability_zone = "us-east-1c"
+  map_public_ip_on_launch = true
+}
+
+resource "aws_subnet" "private_subnet_1" {
+  vpc_id            = aws_vpc.vpc_private.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-east-1a"
+}
+
+resource "aws_subnet" "private_subnet_2" {
+  vpc_id            = aws_vpc.vpc_private.id
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "us-east-1b"
+}
+
+resource "aws_subnet" "private_subnet_3" {
+  vpc_id            = aws_vpc.vpc_private.id
+  cidr_block        = "10.0.5.0/24"
+  availability_zone = "us-east-1c"
+}
+
+resource "aws_nat_gateway" "nat_gateway_1" {
+  allocation_id = aws_eip.nat_eip_1.id
+  subnet_id     = aws_subnet.public_subnet_1.id
+}
+
+resource "aws_nat_gateway" "nat_gateway_2" {
+  allocation_id = aws_eip.nat_eip_2.id
+  subnet_id     = aws_subnet.public_subnet_2.id
+}
+
+resource "aws_nat_gateway" "nat_gateway_3" {
+  allocation_id = aws_eip.nat_eip_3.id
+  subnet_id     = aws_subnet.public_subnet_3.id
+}
+
+resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc_private.id
 }
 
-resource "aws_subnet" "subnet_private_01" {
-  vpc_id     = aws_vpc.vpc_private.id
-  cidr_block = "10.0.16.0/20"
-  depends_on = [aws_vpc.vpc_private]
+resource "aws_route_table" "public_route_table" {
+  vpc_id = aws_vpc.vpc_private.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
 }
 
-resource "aws_subnet" "subnet_private_02" {
-  vpc_id     = aws_vpc.vpc_private.id
-  cidr_block = "10.0.32.0/20"
-  depends_on = [aws_vpc.vpc_private]
+resource "aws_route_table" "private_route_table_1" {
+  vpc_id = aws_vpc.vpc_private.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gateway_1.id
+  }
 }
 
-resource "aws_subnet" "subnet_private_03" {
-  vpc_id     = aws_vpc.vpc_private.id
-  cidr_block = "10.0.48.0/20"
-  depends_on = [aws_vpc.vpc_private]
+resource "aws_route_table" "private_route_table_2" {
+  vpc_id = aws_vpc.vpc_private.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gateway_2.id
+  }
+}
+
+resource "aws_route_table" "private_route_table_3" {
+  vpc_id = aws_vpc.vpc_private.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gateway_3.id
+  }
+}
+
+resource "aws_route_table_association" "private_subnet_1_assoc" {
+  subnet_id      = aws_subnet.private_subnet_1.id
+  route_table_id = aws_route_table.private_route_table_1.id
+}
+
+resource "aws_route_table_association" "private_subnet_2_assoc" {
+  subnet_id      = aws_subnet.private_subnet_2.id
+  route_table_id = aws_route_table.private_route_table_2.id
+}
+
+resource "aws_route_table_association" "private_subnet_3_assoc" {
+  subnet_id      = aws_subnet.private_subnet_3.id
+  route_table_id = aws_route_table.private_route_table_3.id
+}
+
+resource "aws_route_table_association" "public_subnet_assoc_1" {
+  subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.public_route_table.id
+}
+
+resource "aws_route_table_association" "public_subnet_assoc_2" {
+  subnet_id      = aws_subnet.public_subnet_2.id
+  route_table_id = aws_route_table.public_route_table.id
+}
+
+resource "aws_route_table_association" "public_subnet_assoc_3" {
+  subnet_id      = aws_subnet.public_subnet_3.id
+  route_table_id = aws_route_table.public_route_table.id
 }
 
 resource "aws_ecs_cluster" "cluster_valida_token" {
@@ -80,12 +196,40 @@ resource "aws_security_group" "ecs_sg" {
   }
 }
 
+resource "aws_apigatewayv2_vpc_link" "ecs_vpc_link" {
+  name           = "vpc-link-valida-token"
+  security_group_ids = [aws_security_group.alb_sg.id]
+  subnet_ids     = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id, aws_subnet.private_subnet_3.id]  # As subnets privadas do ALB
+}
+
+resource "aws_apigatewayv2_integration" "ecs_integration" {
+  api_id             = aws_apigatewayv2_api.valida-token-gateway.id
+  integration_type   = "HTTP_PROXY"
+  integration_uri    = aws_lb_listener.http.arn
+  integration_method = "GET"
+  connection_type    = "VPC_LINK"
+  connection_id      = aws_apigatewayv2_vpc_link.ecs_vpc_link.id
+}
+
+resource "aws_apigatewayv2_route" "ecs_route" {
+  api_id    = aws_apigatewayv2_api.valida-token-gateway.id
+  route_key = "GET /api/v1/token/validate"
+
+  target = "integrations/${aws_apigatewayv2_integration.ecs_integration.id}"
+}
+
+resource "aws_apigatewayv2_stage" "stage-gtw-valida-token" {
+  api_id      = aws_apigatewayv2_api.valida-token-gateway.id
+  name        = "dev"
+  auto_deploy = true
+}
+
 resource "aws_lb" "alb" {
   name               = "${var.service_name}-alb"
-  internal           = false
+  internal           = true
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [aws_subnet.subnet_private_01.id, aws_subnet.subnet_private_02.id, aws_subnet.subnet_private_03.id]
+  subnets            = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id, aws_subnet.private_subnet_3.id]
 }
 
 resource "aws_lb_target_group" "ecs_tg" {
@@ -169,7 +313,7 @@ resource "aws_ecs_service" "ecs_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.subnet_private_01.id, aws_subnet.subnet_private_02.id, aws_subnet.subnet_private_03.id]
+    subnets          = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id, aws_subnet.private_subnet_3.id]
     security_groups  = [aws_security_group.ecs_sg.id]
     assign_public_ip = false
   }
